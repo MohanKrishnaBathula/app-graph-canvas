@@ -7,8 +7,10 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  addEdge,
   type Node,
   type Edge,
+  type Connection,
   type OnSelectionChangeFunc,
   BackgroundVariant,
   SelectionMode,
@@ -37,6 +39,7 @@ interface GraphCanvasProps {
   onZoomOutRef?: (fn: () => void) => void;
   onSelectedNodeChange?: (node: ServiceNodeType | undefined) => void;
   nodeUpdateRef?: React.MutableRefObject<((nodeId: string, data: Partial<ServiceNodeData>) => void) | null>;
+  onExportRef?: (fn: () => { nodes: Node[]; edges: Edge[] }) => void;
 }
 
 function GraphCanvasInner({ 
@@ -45,6 +48,7 @@ function GraphCanvasInner({
   onZoomOutRef,
   onSelectedNodeChange,
   nodeUpdateRef,
+  onExportRef,
 }: GraphCanvasProps) {
   const selectedAppId = useAppStore((state) => state.selectedAppId);
   const selectedNodeId = useAppStore((state) => state.selectedNodeId);
@@ -64,6 +68,23 @@ function GraphCanvasInner({
     onZoomInRef?.(() => zoomIn({ duration: 200 }));
     onZoomOutRef?.(() => zoomOut({ duration: 200 }));
   }, [fitView, zoomIn, zoomOut, onFitViewRef, onZoomInRef, onZoomOutRef]);
+
+  // Expose export function to parent
+  useEffect(() => {
+    onExportRef?.(() => ({ nodes, edges }));
+  }, [nodes, edges, onExportRef]);
+
+  // Handle edge connections
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      setEdges((eds) => addEdge({
+        ...connection,
+        animated: true,
+        style: { stroke: 'hsl(var(--primary))' },
+      }, eds));
+    },
+    [setEdges]
+  );
 
   // Update nodes when graph data changes
   useEffect(() => {
@@ -193,6 +214,7 @@ function GraphCanvasInner({
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         onSelectionChange={onSelectionChange}
         nodeTypes={nodeTypes}
         selectionMode={SelectionMode.Partial}
@@ -203,6 +225,7 @@ function GraphCanvasInner({
         maxZoom={2}
         proOptions={{ hideAttribution: true }}
         className="bg-canvas-bg"
+        connectionLineStyle={{ stroke: 'hsl(var(--primary))' }}
       >
         <Background 
           variant={BackgroundVariant.Dots} 

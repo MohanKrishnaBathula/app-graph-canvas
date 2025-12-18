@@ -4,6 +4,7 @@ import { LeftRail } from '@/components/layout/LeftRail';
 import { RightPanel } from '@/components/layout/RightPanel';
 import { GraphCanvas } from '@/components/canvas/GraphCanvas';
 import type { ServiceNode, ServiceNodeData } from '@/types';
+import type { Node, Edge } from '@xyflow/react';
 
 const Index = () => {
   const [selectedNode, setSelectedNode] = useState<ServiceNode | undefined>();
@@ -13,6 +14,7 @@ const Index = () => {
   const zoomInRef = useRef<(() => void) | null>(null);
   const zoomOutRef = useRef<(() => void) | null>(null);
   const nodeUpdateRef = useRef<((nodeId: string, data: Partial<ServiceNodeData>) => void) | null>(null);
+  const exportRef = useRef<(() => { nodes: Node[]; edges: Edge[] }) | null>(null);
 
   const handleFitView = useCallback(() => {
     fitViewRef.current?.();
@@ -24,6 +26,10 @@ const Index = () => {
 
   const handleZoomOut = useCallback(() => {
     zoomOutRef.current?.();
+  }, []);
+
+  const handleExport = useCallback(() => {
+    return exportRef.current?.();
   }, []);
 
   const handleNodeUpdate = useCallback((nodeId: string, data: Partial<ServiceNodeData>) => {
@@ -48,6 +54,7 @@ const Index = () => {
         onFitView={handleFitView}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
+        onExport={handleExport}
       />
       
       {/* Main Content */}
@@ -63,6 +70,7 @@ const Index = () => {
             onZoomOutRef={(fn) => { zoomOutRef.current = fn; }}
             onSelectedNodeChange={handleSelectedNodeChange}
             nodeUpdateRef={nodeUpdateRef}
+            onExportRef={(fn) => { exportRef.current = fn; }}
           />
         </main>
         
