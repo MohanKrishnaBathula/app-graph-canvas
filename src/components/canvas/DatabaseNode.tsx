@@ -35,7 +35,7 @@ function DatabaseNodeComponent({ data, selected }: DatabaseNodeProps) {
       <Handle
         type="target"
         position={Position.Left}
-        className="!bg-purple-500 !border-canvas-node-bg"
+        className="!w-3 !h-3 !bg-purple-500 !border-2 !border-canvas-node-bg hover:!bg-purple-400 transition-colors"
       />
 
       {/* Node Content */}
@@ -74,7 +74,7 @@ function DatabaseNodeComponent({ data, selected }: DatabaseNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
-        className="!bg-purple-500 !border-canvas-node-bg"
+        className="!w-3 !h-3 !bg-purple-500 !border-2 !border-canvas-node-bg hover:!bg-purple-400 transition-colors"
       />
     </div>
   );

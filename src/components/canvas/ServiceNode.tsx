@@ -38,7 +38,7 @@ function ServiceNodeComponent({ data, selected }: ServiceNodeProps) {
       <Handle
         type="target"
         position={Position.Left}
-        className="!bg-primary !border-canvas-node-bg"
+        className="!w-3 !h-3 !bg-primary !border-2 !border-canvas-node-bg hover:!bg-primary/80 transition-colors"
       />
 
       {/* Node Content */}
@@ -95,7 +95,7 @@ function ServiceNodeComponent({ data, selected }: ServiceNodeProps) {
       <Handle
         type="source"
         position={Position.Right}
-        className="!bg-primary !border-canvas-node-bg"
+        className="!w-3 !h-3 !bg-primary !border-2 !border-canvas-node-bg hover:!bg-primary/80 transition-colors"
       />
     </div>
   );
