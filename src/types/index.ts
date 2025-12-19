@@ -28,3 +28,21 @@ export interface GraphData {
 }
 
 export type InspectorTab = 'config' | 'runtime';
+
+// Database types
+export interface ColumnSchema {
+  name: string;
+  type: string;
+  primaryKey: boolean;
+  nullable: boolean;
+}
+
+export interface TableSchema {
+  id: string;
+  name: string;
+  columns: ColumnSchema[];
+  rowCount: number;
+  size: string;
+}
+
+export type TableRow = Record<string, unknown>;
