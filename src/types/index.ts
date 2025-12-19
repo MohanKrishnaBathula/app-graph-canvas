@@ -46,3 +46,12 @@ export interface TableSchema {
 }
 
 export type TableRow = Record<string, unknown>;
+
+// Flow types
+export interface Flow {
+  id: string;
+  name: string;
+  status: 'active' | 'draft' | 'paused';
+  nodes: import('@xyflow/react').Node[];
+  edges: import('@xyflow/react').Edge[];
+}
