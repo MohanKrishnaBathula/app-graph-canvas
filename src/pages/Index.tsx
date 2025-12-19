@@ -3,11 +3,16 @@ import { TopBar } from '@/components/layout/TopBar';
 import { LeftRail } from '@/components/layout/LeftRail';
 import { RightPanel } from '@/components/layout/RightPanel';
 import { GraphCanvas } from '@/components/canvas/GraphCanvas';
+import { FlowsView } from '@/components/views/FlowsView';
+import { DataView } from '@/components/views/DataView';
+import { MonitoringView } from '@/components/views/MonitoringView';
+import { useAppStore } from '@/store/appStore';
 import type { ServiceNode, ServiceNodeData } from '@/types';
 import type { Node, Edge } from '@xyflow/react';
 
 const Index = () => {
   const [selectedNode, setSelectedNode] = useState<ServiceNode | undefined>();
+  const activeNavItem = useAppStore((state) => state.activeNavItem);
   
   // Refs for canvas control functions
   const fitViewRef = useRef<(() => void) | null>(null);
@@ -47,6 +52,37 @@ const Index = () => {
     setSelectedNode(node);
   }, []);
 
+  const renderMainContent = () => {
+    switch (activeNavItem) {
+      case 'flows':
+        return <FlowsView />;
+      case 'data':
+        return <DataView />;
+      case 'monitoring':
+        return <MonitoringView />;
+      case 'apps':
+      default:
+        return (
+          <>
+            <main className="flex-1 overflow-hidden">
+              <GraphCanvas
+                onFitViewRef={(fn) => { fitViewRef.current = fn; }}
+                onZoomInRef={(fn) => { zoomInRef.current = fn; }}
+                onZoomOutRef={(fn) => { zoomOutRef.current = fn; }}
+                onSelectedNodeChange={handleSelectedNodeChange}
+                nodeUpdateRef={nodeUpdateRef}
+                onExportRef={(fn) => { exportRef.current = fn; }}
+              />
+            </main>
+            <RightPanel 
+              selectedNode={selectedNode}
+              onNodeUpdate={handleNodeUpdate}
+            />
+          </>
+        );
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Top Bar */}
@@ -62,23 +98,8 @@ const Index = () => {
         {/* Left Rail */}
         <LeftRail />
         
-        {/* Center Canvas */}
-        <main className="flex-1 overflow-hidden">
-          <GraphCanvas
-            onFitViewRef={(fn) => { fitViewRef.current = fn; }}
-            onZoomInRef={(fn) => { zoomInRef.current = fn; }}
-            onZoomOutRef={(fn) => { zoomOutRef.current = fn; }}
-            onSelectedNodeChange={handleSelectedNodeChange}
-            nodeUpdateRef={nodeUpdateRef}
-            onExportRef={(fn) => { exportRef.current = fn; }}
-          />
-        </main>
-        
-        {/* Right Panel */}
-        <RightPanel 
-          selectedNode={selectedNode}
-          onNodeUpdate={handleNodeUpdate}
-        />
+        {/* Center Content */}
+        {renderMainContent()}
       </div>
     </div>
   );
